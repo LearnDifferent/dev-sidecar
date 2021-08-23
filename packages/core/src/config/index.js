@@ -180,7 +180,13 @@ module.exports = {
       'alipay.com': true,
       '*.alipay.com': true,
       'pay.weixin.qq.com': true,
-      'www.baidu.com': true
+      'www.baidu.com': true,
+	  'weibocdn.com': true,
+	  '*.weibocdn.com': true,
+	  '*.bilibili.com': true,
+	  'bilibili.com': true,
+	  'sinaimg.cn': true,
+	  '*.sinaimg.cn': true
     },
     // sniList: {
     //   'github.com': 'abaidu.com'
