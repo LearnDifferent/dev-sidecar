@@ -3,8 +3,9 @@ const Shell = require('./shell')
 const lodash = require('lodash')
 const defConfig = require('./config/index.js')
 const JSON5 = require('json5').default
-
-console.log('JSON5', JSON5)
+const request = require('request')
+const path = require('path')
+const log = require('./utils/util.log')
 let configTarget = lodash.cloneDeep(defConfig)
 
 function get () {
@@ -24,6 +25,13 @@ function _deleteDisabledItem (target) {
 const getDefaultConfigBasePath = function () {
   return get().server.setting.userBasePath
 }
+function _getRemoteSavePath () {
+  const dir = getDefaultConfigBasePath()
+  if (!fs.existsSync(dir)) {
+    fs.mkdirSync(dir)
+  }
+  return path.join(dir, 'remote_config.json5')
+}
 function _getConfigPath () {
   const dir = getDefaultConfigBasePath()
   if (!fs.existsSync(dir)) {
@@ -33,6 +41,9 @@ function _getConfigPath () {
 }
 
 function doMerge (defObj, newObj) {
+  if (newObj == null) {
+    return defObj
+  }
   const defObj2 = { ...defObj }
   const newObj2 = {}
   for (const key in newObj) {
@@ -69,11 +80,69 @@ function doMerge (defObj, newObj) {
   })
   return newObj2
 }
-
+let timer
 const configApi = {
+  async startAutoDownloadRemoteConfig () {
+    if (timer != null) {
+      clearInterval(timer)
+    }
+    const download = async () => {
+      try {
+        await configApi.downloadRemoteConfig()
+        configApi.reload()
+      } catch (e) {
+        log.error(e)
+      }
+    }
+    await download()
+    timer = setInterval(download, 24 * 60 * 60 * 1000) // 1天
+  },
+  downloadRemoteConfig () {
+    if (get().app.remoteConfig.enabled !== true) {
+      return
+    }
+    const remoteConfigUrl = get().app.remoteConfig.url
+    // eslint-disable-next-line handle-callback-err
+    return new Promise((resolve, reject) => {
+      log.info('下载远程配置：', remoteConfigUrl)
+      request(remoteConfigUrl, (error, response, body) => {
+        if (error) {
+          log.error('下载远程配置失败', error)
+          reject(error)
+          return
+        }
+        if (response && response.statusCode === 200) {
+          fs.writeFileSync(_getRemoteSavePath(), body)
+          resolve()
+        } else {
+          const message = '下载远程配置失败:' + response.message + ',code:' + response.statusCode
+          log.error(message)
+          reject(new Error(message))
+        }
+      })
+    })
+  },
+  readRemoteConfig () {
+    if (get().app.remoteConfig.enabled !== true) {
+      return {}
+    }
+    try {
+      const path = _getRemoteSavePath()
+      log.info('读取合并远程配置文件:', path)
+      if (fs.existsSync(path)) {
+        const file = fs.readFileSync(path)
+        return JSON5.parse(file.toString())
+      }
+    } catch (e) {
+      log.info('远程配置读取有误', e)
+    }
+
+    return {}
+  },
   /**
    * 保存自定义的 config
    * @param newConfig
+   * @param remoteConfig //远程配置
    */
   save (newConfig) {
     // 对比默认config的异同
@@ -113,9 +182,11 @@ const configApi = {
       }
     }
     lodash.mergeWith(merged, clone, customizer)
+    lodash.mergeWith(merged, configApi.readRemoteConfig(), customizer)
     lodash.mergeWith(merged, newConfig, customizer)
     _deleteDisabledItem(merged)
     configTarget = merged
+    log.info('加载配置完成')
     return configTarget
   },
   getDefault () {

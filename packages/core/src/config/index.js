@@ -14,6 +14,13 @@ module.exports = {
     mode: 'default',
     autoStart: {
       enabled: false
+    },
+    remoteConfig: {
+      enabled: true,
+      url: 'https://gitee.com/docmirror/dev-sidecar/raw/master/packages/core/src/config/remote_config.json5'
+    },
+    dock: {
+      hideWhenWinClose: false
     }
   },
   server: {
@@ -21,6 +28,7 @@ module.exports = {
     port: 1181,
     setting: {
       NODE_TLS_REJECT_UNAUTHORIZED: true,
+      verifySsl: true,
       script: {
         enabled: true,
         defaultDir: './extra/scripts/'
@@ -72,8 +80,7 @@ module.exports = {
       },
       'github.githubassets.com': {
         '.*': {
-          proxy: 'github.githubassets.com',
-          sni: 'baidu.com'
+          proxy: 'assets.fastgit.org'
         }
       },
       'customer-stories-feed.github.com': {
@@ -177,6 +184,10 @@ module.exports = {
       }
     },
     whiteList: {
+      'apple.com': true,
+      '*.apple.com': true,
+      'microsoft.com': true,
+      '*.microsoft.com': true,
       'alipay.com': true,
       '*.alipay.com': true,
       'pay.weixin.qq.com': true,

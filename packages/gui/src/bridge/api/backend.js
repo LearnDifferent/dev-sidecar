@@ -6,7 +6,7 @@ import JSON5 from 'json5'
 import path from 'path'
 const pk = require('../../../package.json')
 const mitmproxyPath = path.join(__dirname, 'mitmproxy.js')
-process.env.DS_SYSPROXY_PATH = path.join(__dirname, '../extra/sysproxy.exe')
+process.env.DS_EXTRA_PATH = path.join(__dirname, '../extra/')
 const log = require('../../utils/util.log')
 const getDefaultConfigBasePath = function () {
   return DevSidecar.api.config.get().server.setting.userBasePath
@@ -124,6 +124,13 @@ function invoke (api, param) {
   return ret
 }
 
+async function doStart () {
+  // 开启自动下载远程配置
+  await DevSidecar.api.config.startAutoDownloadRemoteConfig()
+  // 启动所有
+  localApi.startup()
+}
+
 export default {
   install ({ win }) {
     // 接收view的方法调用
@@ -150,8 +157,7 @@ export default {
 
     // 合并用户配置
     DevSidecar.api.config.reload()
-    // 启动所有
-    localApi.startup()
+    doStart()
   },
   devSidecar: DevSidecar,
   invoke

@@ -5,8 +5,6 @@
 <a href='https://gitee.com/docmirror/dev-sidecar'><img src='https://gitee.com/docmirror/dev-sidecar/badge/star.svg?theme=dark' alt='star'/></a>
 <a href='https://github.com/docmirror/dev-sidecar'><img alt="GitHub stars" src="https://img.shields.io/github/stars/docmirror/dev-sidecar?logo=github"></a>
     
-      
-
 ## 一、 特性
 
 ### 1、 dns优选（解决***污染问题）
@@ -45,17 +43,13 @@
 * 官方与淘宝npm registry一键切换,
 * 某些npm install的时候，并且使用cnpm也无法安装时，可以尝试开启npm代理再试
 
-### 6、 增强功能
-* 众所周知的原因，不能说太多，默认关闭，感兴趣的可以私下交流
-* 反正开了这个之后，上面那些dns优选什么的特性好像都不香了
 
 ***安全警告***：
 * 请勿使用来源不明的服务地址，有隐私和账号泄露风险
 * 本应用及服务端承诺不收集任何信息。介意者请使用安全模式。
-* 建议自建服务端（增强功能页面右上角点击查看自建服务端方法）
 
 ## 二、快速开始
-支持windows、Mac
+支持windows、Mac、Linux(Ubuntu)
 
 ### DevSidecar桌面应用
  
@@ -83,9 +77,14 @@
 #### 3 安装根证书     
        
 第一次打开会提示安装证书，根据提示操作即可      
- 
+
+更多有关根证书的说明，请参考 [为什么要安装根证书?](./doc/caroot.md)
+
 > 根证书是本地随机生成的，所以不用担心根证书的安全问题（本应用不收集任何用户信息）     
-> 你也可以在加速服务设置中自定义根证书（PEM格式的证书与私钥） 
+> 你也可以在加速服务设置中自定义根证书（PEM格式的证书与私钥）    
+
+
+> 火狐浏览器需要[手动安装证书](#3浏览器打开提示证书不受信任) 
 
 #### 4 开始加速吧      
 去试试打开github   
@@ -114,20 +113,13 @@
 
 ### 默认模式
 * 此模式：开启拦截、关闭增强、开启dns优选、开启测速
-* 需要安装证书
+* 需要安装证书，通过修改sni直连访问github
 * 功能上包含特性1/2/3/4。
 
-### 增强模式
-* 此模式：开启拦截、开启增强、开启dns优选、关闭测速
-* 需要安装证书
-* 功能上包含特性1/2/3/4/5
-* 由于敏感原因，默认关闭，感兴趣的可以私下交流
-
-## 最佳实践
+## 四、 最佳实践
 
 * 把dev-sidecar一直开着就行了
-* 建议遇到打开比较慢的国外网站，可以尝试将该域名添加到dns设置中（注意：被GFW封杀的无效）    
-* 有时候安全模式打开github也挺快
+* 建议遇到打开比较慢的国外网站，可以尝试将该域名添加到dns设置中（注意：被GFW封杀的无效）
 
 ### 其他加速
  1. git clone 加速      
@@ -146,7 +138,7 @@
    >2. [github.com.cnpmjs.org](https://github.com.cnpmjs.org/) 这个很容易超限
 
 
-## 四、api
+## 五、api
 
 ### 拦截配置
 没有配置域名的不会拦截，其他根据配置进行拦截处理
@@ -200,7 +192,7 @@ const intercepts = {
 ```
 注意：暂时只支持IPv4的解析
 
-## 五、问题排查
+## 六、问题排查
 
 ### 1、dev-sidecar的前两个开关没有处于打开状态
 1. 尝试将开关按钮手动打开
@@ -258,7 +250,7 @@ sudo xcodebuild -license
 * 火狐浏览器：火狐浏览器不走系统的根证书，需要在选项中添加根证书   
 1、火狐浏览器->选项->隐私与安全->证书->查看证书   
 2、证书颁发机构->导入    
-3、选择证书文件`C:\Users\Administrator\.dev-sidecar\dev-sidecar.ca.crt`（Mac为`~/.dev-sidecar`目录）    
+3、选择证书文件`C:\Users(用户)\Administrator(你的账号)\.dev-sidecar\dev-sidecar.ca.crt`（Mac或linux为`~/.dev-sidecar`目录）    
 4、勾选信任由此证书颁发机构来标识网站，确定即可      
 
 ### 4. 打开github显示连接超时
@@ -286,12 +278,14 @@ Error: www.github.com:443, 代理请求超时
 
  对于此问题有如下几种解决方案可供选择：   
  1、重新打开应用即可（右键应用托盘图标可完全退出，将会正常关闭系统代理设置）   
- 2、如果应用被卸载了，此时需要[手动关闭系统代理设置](./doc/recover.md)
+ 2、如果应用被卸载了，此时需要[手动关闭系统代理设置](./doc/recover.md)   
+ 3、如果你是因为开着ds的情况下重启电脑导致无法上网，你可以设置ds为开机自启   
 
-## 六、在其他程序使用
+
+## 七、在其他程序使用
 * [java程序使用](./doc/other.md#Java程序使用)
 
-## 七、贡献代码
+## 八、贡献代码
 
 ### 开发调试模式启动
 
@@ -309,10 +303,11 @@ cd packages/gui
 npm run electron
 
 ```
+> 如果electron依赖包下载不动，可以开启ds的npm加速
 
 ### 打包成可执行文件
 ```shell
-cd packages/gui
+# 先执行上面的步骤，然后运行如下命令打包成可执行文件
 npm run electron:build
 ```
 
@@ -320,22 +315,19 @@ npm run electron:build
 如果你想将你的修改贡献出来，请提交pr
 
 
-## 八、联系作者
+## 九、联系作者
 
-欢迎bug反馈，需求建议，技术交流等（请备注dev-sidecar，或简称DS）      
+欢迎bug反馈，需求建议，技术交流等（请备注dev-sidecar，或简称DS） 
+<div style="display: flex; justify-content:space-around;">
+<img height="230px" src="https://gitee.com/docmirror/dev-sidecar/raw/master/doc/me.png">
+<img height="230px" src="https://gitee.com/docmirror/dev-sidecar/raw/master/doc/qq_group.png">
+</div>
 
-![](./doc/contact.png)      
 
-
-## 九、求star
+## 十、求star
 我的其他项目求star
 * [fast-crud](https://github.com/fast-crud/fast-crud) : 开发crud快如闪电
 * [certd](https://github.com/certd/certd) : 让你的证书永不过期
-
-## 十、广告
-* [腾讯云企业老用户3折服务器](https://curl.qcloud.com/MRY91neQ)
-* [腾讯云新用户大礼包](https://curl.qcloud.com/VQ2ARft2)
-* [阿里云618](https://www.aliyun.com/activity/618/2021?userCode=qya11txb)
 
 ## 十一、感谢
 本项目使用lerna包管理工具   

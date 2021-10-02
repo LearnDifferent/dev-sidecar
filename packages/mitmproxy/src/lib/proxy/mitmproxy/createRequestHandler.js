@@ -16,6 +16,9 @@ module.exports = function createRequestHandler (createIntercepts, middlewares, e
     let proxyReq
 
     const rOptions = commonUtil.getOptionsFormRequest(req, ssl, externalProxy)
+
+    rOptions.agent.options.rejectUnauthorized = setting.verifySsl
+
     if (rOptions.headers.connection === 'close') {
       req.socket.setKeepAlive(false)
     } else if (rOptions.customSocketId != null) { // for NTLM
@@ -275,7 +278,10 @@ module.exports = function createRequestHandler (createIntercepts, middlewares, e
       if (!res.writableEnded) {
         const status = e.status || 500
         res.writeHead(status, { 'Content-Type': 'text/html;charset=UTF8' })
-        res.write(`DevSidecar Warning:<br/> ${e.toString()}`)
+        res.write(`DevSidecar Error:<br/>
+目标网站请求错误：【${e.code}】 ${e.message}<br/>
+目标地址：${rOptions.protocol}//${rOptions.hostname}:${rOptions.port}${rOptions.path}`
+        )
         res.end()
         log.error('request error', e.message)
       }

@@ -6,12 +6,12 @@
 ### 1. ubuntu
  * 下载`DevSidecar-x.x.x.deb`
  * 执行命令安装 `dpkg -i DevSidecar-x.x.x.deb`
+ * 去应用列表里面找到dev-sidecar应用，打开即可
 
 ### 2. 其他linux系统（未测试）
 * 下载 `DevSidecar-x.x.x.AppImage`
 * 设置可执行权限 `sudo chmod +X DevSidecar-x.x.x.AppImage`
 * 双击运行
-
 
 ## 证书安装
 默认模式和增强模式需要系统信任CA证书。   
@@ -25,10 +25,11 @@
 ### 2. 火狐浏览器安装证书
 * 火狐浏览器->选项->隐私与安全->证书->查看证书   
 * 证书颁发机构->导入    
-* 选择证书文件`C:\Users\Administrator\.dev-sidecar\dev-sidecar.ca.crt`（Mac为`~/.dev-sidecar`目录）    
+* 选择证书文件在`~/.dev-sidecar`目录下    
 * 勾选信任由此证书颁发机构来标识网站，确定即可
 
 ### 3. chrome浏览器安装证书
+证书文件目录为`~/.dev-sidecar`
 ![](../packages/gui/public/setup-linux.png)
 
 
