@@ -1,6 +1,6 @@
 {
   "name": "@docmirror/dev-sidecar-gui",
-  "version": "1.6.2",
+  "version": "1.7.3",
   "private": false,
   "license": "MPL-2.0",
   "main": "background.js",
@@ -21,8 +21,8 @@
     "name": "Greper"
   },
   "dependencies": {
-    "@docmirror/dev-sidecar": "^1.6.2",
-    "@docmirror/mitmproxy": "^1.6.2",
+    "@docmirror/dev-sidecar": "^1.7.3",
+    "@docmirror/mitmproxy": "^1.7.3",
     "adm-zip": "^0.5.5",
     "ant-design-vue": "^1.6.5",
     "compressing": "^1.5.1",
@@ -30,6 +30,7 @@
     "electron-baidu-tongji": "^1.0.5",
     "electron-reload": "^1.5.0",
     "electron-store": "^6.0.1",
+    "electron-sudo": "^4.0.12",
     "electron-updater": "^4.3.5",
     "es-abstract": "^1.17.7",
     "extract-zip": "^2.0.1",
@@ -50,7 +51,7 @@
     "@vue/cli-service": "~4.5.0",
     "@vue/eslint-config-standard": "^5.1.2",
     "babel-eslint": "^10.1.0",
-    "electron": "13.1.9",
+    "electron": "17.1.0",
     "electron-devtools-installer": "^3.1.0",
     "electron-icon-builder": "^2.0.1",
     "eslint": "^6.7.2",
@@ -83,5 +84,5 @@
     "not dead"
   ],
   "__npminstall_done": false,
-  "gitHead": "9b027af3ee7e88975a54692ed83096802764a8dc"
+  "gitHead": "30ecf21cb001fb8d821e575d476ca0ffb4ff086e"
 }

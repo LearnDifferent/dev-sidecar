@@ -1,9 +1,27 @@
 # dev-sidecar
-开发者边车，命名取自service-mesh的service-sidecar，意为为开发者打辅助的边车工具    
+开发者边车，命名取自service-mesh的service-sidecar，意为为开发者打辅助的边车工具（以下简称ds）    
 通过本地代理的方式将https请求代理到一些国内的加速通道上
     
 <a href='https://gitee.com/docmirror/dev-sidecar'><img src='https://gitee.com/docmirror/dev-sidecar/badge/star.svg?theme=dark' alt='star'/></a>
 <a href='https://github.com/docmirror/dev-sidecar'><img alt="GitHub stars" src="https://img.shields.io/github/stars/docmirror/dev-sidecar?logo=github"></a>
+
+
+
+> ------------------------------重要提醒1---------------------------------
+>
+> 注意：由于electron无法监听windows的关机事件，开着ds情况下直接重启电脑，会导致无法上网，你可以手动启动ds即可恢复网络，你也可以将ds设置为开机自启。
+>
+> 关于此问题的更多讨论请前往：    
+> https://gitee.com/docmirror/dev-sidecar/issues/I49OUL     
+> https://github.com/docmirror/dev-sidecar/issues/109
+>
+> ------------------------------重要提醒2---------------------------------
+>
+> 注意：本应用启动会自动修改系统代理，所以会与其他vpn、fq等代理软件有冲突，请务必不要一起使用。     
+> 本应用主要目的在于直连访问github，如果你已经有飞机了，那建议还是不要用这个自行车（ds）了
+>
+>
+
     
 ## 一、 特性
 
@@ -48,6 +66,10 @@
 * 请勿使用来源不明的服务地址，有隐私和账号泄露风险
 * 本应用及服务端承诺不收集任何信息。介意者请使用安全模式。
 
+
+
+
+
 ## 二、快速开始
 支持windows、Mac、Linux(Ubuntu)
 
@@ -89,9 +111,7 @@
 #### 4 开始加速吧      
 去试试打开github   
  
----------
-> 第一次访问会去国外的dns服务器上获取ip，会比较慢一点，后面就快了
----------
+
 
 ### 开启前 vs 开启后 
  
@@ -118,7 +138,7 @@
 
 ## 四、 最佳实践
 
-* 把dev-sidecar一直开着就行了
+* 把dev-sidecar一直开着就行了（注意windows下开着ds重启电脑，会无法上网，重新打开ds即可。）
 * 建议遇到打开比较慢的国外网站，可以尝试将该域名添加到dns设置中（注意：被GFW封杀的无效）
 
 ### 其他加速
@@ -201,31 +221,24 @@ const intercepts = {
    
 如果是mac系统，可能是下面的原因
 
-#### Mac系统使用时，首页的系统代理开关无法打开
+#### 1.1 Mac系统使用时，首页的系统代理开关无法打开
 出现这个问题可能是没有开启系统代理命令的执行权限   
 ```
 networksetup -setwebproxy 'WiFi' 127.0.0.1 1181 
 #看是否有如下错误提示
 ** Error: Command requires admin privileges.
 ```
-如果有上面的错误提示，请尝试如下两种方法：
+如果有上面的错误提示，请尝试如下方法：
 
-1、 取消访问偏好设置需要管理员密码
-系统偏好设置—>安全性与隐私—> 通用—> 高级—> 访问系统范围的偏好设置需要输入管理员密码（取消勾选）
+>取消访问偏好设置需要管理员密码    
+>系统偏好设置—>安全性与隐私—> 通用—> 高级—> 访问系统范围的偏好设置需要输入管理员密码（取消勾选）
 
-2、 可能是由于安装了xcode，但未授权导致
-请在终端输入如下命令进行授权
-```
-sudo xcodebuild -license
-# 一直按回车，该agree的时候输入agree即可
-```
-然后再次尝试看是否能够打开系统代理开关       
-如果还不行，请联系作者
 
 ### 2、没有加速效果
-***本应用仅支持https加速，请务必确认你访问的网站地址是https开头的***    
 
-1. 本应用仅支持https加速
+>本应用仅支持https加速，请务必确认你访问的网站地址是https开头的    
+
+1. 本应用仅支持https加速      
 请务必确认你访问的地址是https开头的
 比如： https://github.com/
 
@@ -237,29 +250,34 @@ sudo xcodebuild -license
 
 6. 可以尝试换个浏览器试试
 
-7. 请确认网络代理设置处于勾选状态    
-正常情况下dev-sidecar在“系统代理”开关打开时，会自动设置代理。
+7. 请确认网络代理设置处于勾选状态      
+正常情况下ds在“系统代理”开关打开时，会自动设置系统代理。
 
 
 ### 3、浏览器打开提示证书不受信任
 
-* windows: 请确认证书已正确安装在“信任的根证书颁发机构”下    
+![](./doc/crt-error.png)
+一般是证书安装位置不对，重新安装证书后，重启浏览器
 
-* mac: 请确认证书已经被安装并已经设置信任。   
+#### 3.1 windows: 请确认证书已正确安装在“信任的根证书颁发机构”下    
 
-* 火狐浏览器：火狐浏览器不走系统的根证书，需要在选项中添加根证书   
-1、火狐浏览器->选项->隐私与安全->证书->查看证书   
-2、证书颁发机构->导入    
-3、选择证书文件`C:\Users(用户)\Administrator(你的账号)\.dev-sidecar\dev-sidecar.ca.crt`（Mac或linux为`~/.dev-sidecar`目录）    
-4、勾选信任由此证书颁发机构来标识网站，确定即可      
+#### 3.2 mac: 请确认证书已经被安装并已经设置信任。   
+
+#### 3.3 火狐浏览器：火狐浏览器不走系统的根证书，需要在选项中添加根证书  
+
+>    1、火狐浏览器->选项->隐私与安全->证书->查看证书   
+>    2、证书颁发机构->导入    
+>    3、选择证书文件`C:\Users(用户)\Administrator(你的账号)\.dev-sidecar\dev-sidecar.ca.crt`（Mac或linux为`~/.dev-sidecar`目录）    
+>    4、勾选信任由此证书颁发机构来标识网站，确定即可      
 
 ### 4. 打开github显示连接超时
-  ```html
+```html
 DevSidecar Warning:
 Error: www.github.com:443, 代理请求超时
 ```
-如果是安全模式，则是因为不稳定导致的，等一会再刷新试试     
-如果是增强模式，则是由于访问人数过多，正常现象
+1、检查测速界面github.com是否有ip ，如果没有ip，则可能是由于你的网络提供商封锁了dns服务商的ip（试试能否ping通：1.1.1.1 / 9.9.9.9 ）   
+2、如果是安全模式，则是因为不稳定导致的，等一会再刷新试试     
+3、如果是增强模式，则是由于访问人数过多，正常现象
 
 ### 5、查看日志是否有报错
  如果还是不行，请在下方加作者好友，将服务日志发送给作者进行分析             
@@ -281,6 +299,21 @@ Error: www.github.com:443, 代理请求超时
  2、如果应用被卸载了，此时需要[手动关闭系统代理设置](./doc/recover.md)   
  3、如果你是因为开着ds的情况下重启电脑导致无法上网，你可以设置ds为开机自启   
 
+
+### 8、卸载应用后上不了网，git请求不了
+如果你在卸载应用前，没有正常退出app，就有可能无法上网。请按如下步骤操作恢复您的网络：
+
+1、关闭系统代理设置，参见：[手动关闭系统代理设置](./doc/recover.md)   
+2、执行下面的命令关闭git的代理设置(如果你开启过git.ext的开关)
+```shell
+git config --global --unset http.proxy
+git config --global --unset https.proxy
+```
+3、执行下面的命令关闭npm的代理设置(如果你开启过npm加速的开关)
+```shell
+npm config delete proxy
+npm config delete https-proxy
+```
 
 ## 七、在其他程序使用
 * [java程序使用](./doc/other.md#Java程序使用)
@@ -316,11 +349,17 @@ npm run electron:build
 
 
 ## 九、联系作者
+欢迎bug反馈，需求建议，技术交流等（请备注dev-sidecar，或简称DS）
 
-欢迎bug反馈，需求建议，技术交流等（请备注dev-sidecar，或简称DS） 
+1、 加群
 <div style="display: flex; justify-content:space-around;">
-<img height="230px" src="https://gitee.com/docmirror/dev-sidecar/raw/master/doc/me.png">
 <img height="230px" src="https://gitee.com/docmirror/dev-sidecar/raw/master/doc/qq_group.png">
+</div>
+
+
+2、 加作者好友
+<div style="display: flex; justify-content:space-around;">
+<img height="200px" src="https://gitee.com/docmirror/dev-sidecar/raw/master/doc/me.png">
 </div>
 
 

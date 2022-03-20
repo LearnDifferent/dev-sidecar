@@ -28,6 +28,10 @@
 
             <a-button class="md-mr-10" icon="profile" @click="openLog()">日志</a-button>
           </a-form-item>
+          <a-form-item label="绑定IP" :label-col="labelCol" :wrapper-col="wrapperCol">
+            <a-input v-model="config.server.host"/>
+            <div class="form-help">你可以设置0.0.0.0，让其他电脑可以使用此代理服务</div>
+          </a-form-item>
           <a-form-item label="代理端口" :label-col="labelCol" :wrapper-col="wrapperCol">
             <a-input v-model="config.server.port"/>
             <div class="form-help">修改后需要重启应用</div>
@@ -51,18 +55,16 @@
                             v-model="config.server.setting.rootCaFile.keyPath"/>
           </a-form-item>
           <a-form-item label="启用拦截" :label-col="labelCol" :wrapper-col="wrapperCol">
-            <a-tooltip title="关闭拦截，且关闭功能增强的话，就不需要安装根证书，本应用退化为dns优选，最安全">
               <a-checkbox v-model="config.server.intercept.enabled">
                 启用拦截
               </a-checkbox>
-            </a-tooltip>
+            <div class="form-help">关闭拦截，且关闭功能增强的话，就不需要安装根证书，本应用退化为安全模式</div>
           </a-form-item>
           <a-form-item label="启用脚本" :label-col="labelCol" :wrapper-col="wrapperCol">
-            <a-tooltip title="关闭后，github的clone加速链接复制也将关闭">
               <a-checkbox v-model="config.server.setting.script.enabled">
                 允许插入并运行脚本
               </a-checkbox>
-            </a-tooltip>
+            <div class="form-help">关闭后，github的clone加速链接复制也将关闭</div>
           </a-form-item>
         </a-tab-pane>
         <a-tab-pane tab="拦截设置" key="2">
@@ -79,7 +81,7 @@
               </a-col>
             </a-row>
             <a-row :gutter="10" style="margin-top: 10px" v-for="(item,index) of whiteList" :key='index'>
-              <a-col :span="14">
+              <a-col :span="19">
                 <a-input :disabled="item.value ===false" v-model="item.key"></a-input>
               </a-col>
               <a-col :span="3">
@@ -244,7 +246,6 @@ export default {
   computed: {
     speedDnsOptions () {
       const options = []
-      console.log('this.config', this.config)
       if (!this.config || !this.config.server || !this.config.server.dns || !this.config.server.dns.providers) {
         return options
       }

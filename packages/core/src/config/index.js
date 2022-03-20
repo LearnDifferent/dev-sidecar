@@ -21,11 +21,14 @@ module.exports = {
     },
     dock: {
       hideWhenWinClose: false
-    }
+    },
+    closeStrategy: 0,
+    showShutdownTip: true
   },
   server: {
     enabled: true,
-    port: 1181,
+    host: '127.0.0.1',
+    port: 31181,
     setting: {
       NODE_TLS_REJECT_UNAUTHORIZED: true,
       verifySsl: true,
@@ -80,7 +83,11 @@ module.exports = {
       },
       'github.githubassets.com': {
         '.*': {
-          proxy: 'assets.fastgit.org'
+          proxy: 'github.githubassets.com',
+          backup: [
+            'assets.fastgit.org'
+          ],
+          sni: 'assets.fastgit.org'
         }
       },
       'customer-stories-feed.github.com': {
@@ -159,7 +166,7 @@ module.exports = {
       'www.googleapis.com': { '.*': { abort: false, desc: '设置abort：true可以快速失败，节省时间' } },
       'lh*.googleusercontent.com': { '.*': { abort: false, desc: '设置abort：true可以快速失败，节省时间' } },
       // mapbox-node-binary.s3.amazonaws.com/sqlite3/v5.0.0/napi-v3-win32-x64.tar.gz
-      '*.s3.amazonaws.com': {
+      '*.s3.1amazonaws1.com': {
         '/sqlite3/.*': {
           redirect: 'npm.taobao.org/mirrors'
         }
@@ -242,7 +249,10 @@ module.exports = {
         '*github.com': 'quad9',
         '*.vuepress.vuejs.org': 'quad9',
         'gh.docmirror.top': 'quad9',
-        '*v2ex.com': 'quad9'
+        '*v2ex.com': 'quad9',
+        '*pypi.org': 'quad9',
+        '*jetbrains.com': 'quad9',
+        '*azureedge.net': 'quad9'
       },
       speedTest: {
         enabled: true,
